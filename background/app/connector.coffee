@@ -2,8 +2,8 @@ Event = require('lib/event')
 Tabs = require('chrome/tabs')
 Runtime = require('chrome/runtime')
 BrowserAction = require('chrome/browser-action')
-log = require('./util/debuger').log('Connector')
-error = require('./util/debuger').error('Connector')
+log = require('./util/debug').log('Connector')
+error = require('./util/debug').error('Connector')
 
 class Connector
 

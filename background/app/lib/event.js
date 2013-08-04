@@ -1,4 +1,4 @@
-var log = require('../util/debuger').log('Event');
+var log = require('../util/debug').log('Event');
 
 function error(message) {
   var err = new Error(message);

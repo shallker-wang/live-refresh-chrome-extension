@@ -3,8 +3,8 @@ Runtime = require('chrome/runtime')
 BrowserAction = require('chrome/browser-action')
 Event = require('lib/event')
 Connector = require('connector')
-log = require('./util/debuger').log('Activator')
-error = require('./util/debuger').error('Activator')
+log = require('./util/debug').log('Activator')
+error = require('./util/debug').error('Activator')
 
 class Activator
 

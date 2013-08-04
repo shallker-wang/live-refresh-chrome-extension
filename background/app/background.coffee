@@ -1,5 +1,5 @@
-log = require('./util/debuger').log('Background')
-error = require('./util/debuger').error('Background')
+log = require('./util/debug').log('Background')
+error = require('./util/debug').error('Background')
 Tabs = require('chrome/tabs')
 BrowserAction = require('chrome/browser-action')
 Activator = require('activator')

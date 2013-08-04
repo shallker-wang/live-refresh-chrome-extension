@@ -1,5 +1,5 @@
-log = require('../util/debuger').log('Reloader')
-error = require('../util/debuger').error('Reloader')
+log = require('../util/debug').log('Reloader')
+error = require('../util/debug').error('Reloader')
 dom = require('./dom')
 require('css-auto-reload')
 

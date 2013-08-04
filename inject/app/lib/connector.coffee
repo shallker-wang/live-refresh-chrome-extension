@@ -1,5 +1,5 @@
-log = require('../util/debuger').log('Connector')
-error = require('../util/debuger').error('Connector')
+log = require('../util/debug').log('Connector')
+error = require('../util/debug').error('Connector')
 Event = require('event')
 StatusReceiver = require('./status-receiver')
 

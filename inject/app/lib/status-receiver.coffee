@@ -1,5 +1,5 @@
-log = require('../util/debuger').log('StatusReceiver')
-error = require('../util/debuger').error('StatusReceiver')
+log = require('../util/debug').log('StatusReceiver')
+error = require('../util/debug').error('StatusReceiver')
 Event = require('./event')
 Reloader = require('./reloader')
 
