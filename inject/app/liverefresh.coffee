@@ -1,6 +1,6 @@
 Runtime = require('./chrome/runtime')
-log = require('./util/debuger').log('Liverefresh')
-error = require('./util/debuger').error('Liverefresh')
+log = require('./util/debug').log('Liverefresh')
+error = require('./util/debug').error('Liverefresh')
 Connector = require('./lib/connector')
 
 class Liverefresh

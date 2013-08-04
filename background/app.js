@@ -105,9 +105,9 @@ define('/activator', function(exports, require, module) {
 
   Connector = require('connector');
 
-  log = require('./util/debuger').log('Activator');
+  log = require('./util/debug').log('Activator');
 
-  error = require('./util/debuger').error('Activator');
+  error = require('./util/debug').error('Activator');
 
   Activator = (function() {
     var icon;
@@ -202,9 +202,9 @@ define('/background', function(exports, require, module) {
   var Activator, Background, BrowserAction, Tabs, error, log,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  log = require('./util/debuger').log('Background');
+  log = require('./util/debug').log('Background');
 
-  error = require('./util/debuger').error('Background');
+  error = require('./util/debug').error('Background');
 
   Tabs = require('chrome/tabs');
 
@@ -289,9 +289,9 @@ define('/connector', function(exports, require, module) {
 
   BrowserAction = require('chrome/browser-action');
 
-  log = require('./util/debuger').log('Connector');
+  log = require('./util/debug').log('Connector');
 
-  error = require('./util/debuger').error('Connector');
+  error = require('./util/debug').error('Connector');
 
   Connector = (function() {
     var js;
@@ -895,7 +895,7 @@ define('/chrome/tabs', function(exports, require, module) {
 });
 
 define('/lib/event', function(exports, require, module) {
-var log = require('../util/debuger').log('Event');
+var log = require('../util/debug').log('Event');
 
 function error(message) {
   var err = new Error(message);
@@ -1032,32 +1032,41 @@ exports.debug = function(enable) {
 }
 });
 
-define('/util/debuger', function(exports, require, module) {
-var debuger = new Object;
+define('/util/debug', function(exports, require, module) {
+var debug = new Object;
 
-debuger.output = true;
+debug.output = {
+  level: {
+    1: false,
+    2: true,
+    3: true
+  }
+}
 
-debuger.log = function(masterName) {
-  if (!debuger.output) return;
+debug.log = function(masterName, level) {
+  if (typeof level === 'undefined') {
+    level = 1;
+  }
   return function() {
+    if (!debug.output.level[level]) return;
     var argumentsArray = Array.prototype.slice.call(arguments);
     argumentsArray.unshift(masterName);
     console.log.apply(console, argumentsArray);    
   }
 }
 
-debuger.set = function(name, value) {
-  if (typeof debuger.set[name] === 'function') return debuger.set[name](value);
-  debuger[name] = value;
-  return debuger;
+debug.set = function(name, value) {
+  if (typeof debug.set[name] === 'function') return debug.set[name](value);
+  debug[name] = value;
+  return debug;
 }
 
-debuger.get = function(name) {
-  if (typeof debuger.get[name] === 'function') return debuger.get[name](name);
-  return debuger[name];
+debug.get = function(name) {
+  if (typeof debug.get[name] === 'function') return debug.get[name](name);
+  return debug[name];
 }
 
-debuger.error = function(masterName) {
+debug.error = function(masterName) {
   return function(message) {
     err = new Error(message)
     err.from = masterName
@@ -1065,5 +1074,5 @@ debuger.error = function(masterName) {
   }
 }
 
-module.exports = debuger;
+module.exports = debug;
 });

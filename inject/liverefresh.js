@@ -97,9 +97,9 @@ define('/liverefresh', function(exports, require, module) {
 
   Runtime = require('./chrome/runtime');
 
-  log = require('./util/debuger').log('Liverefresh');
+  log = require('./util/debug').log('Liverefresh');
 
-  error = require('./util/debuger').error('Liverefresh');
+  error = require('./util/debug').error('Liverefresh');
 
   Connector = require('./lib/connector');
 
@@ -651,9 +651,9 @@ define('/lib/connector', function(exports, require, module) {
   var Connector, Event, StatusReceiver, error, log,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  log = require('../util/debuger').log('Connector');
+  log = require('../util/debug').log('Connector');
 
-  error = require('../util/debuger').error('Connector');
+  error = require('../util/debug').error('Connector');
 
   Event = require('event');
 
@@ -858,7 +858,7 @@ module.exports = dom;
 });
 
 define('/lib/event', function(exports, require, module) {
-var log = require('../util/debuger').log('Event');
+var log = require('../util/debug').log('Event');
 
 function error(message) {
   var err = new Error(message);
@@ -999,9 +999,9 @@ define('/lib/reloader', function(exports, require, module) {
 (function() {
   var Reloader, dom, error, log;
 
-  log = require('../util/debuger').log('Reloader');
+  log = require('../util/debug').log('Reloader');
 
-  error = require('../util/debuger').error('Reloader');
+  error = require('../util/debug').error('Reloader');
 
   dom = require('./dom');
 
@@ -1048,9 +1048,9 @@ define('/lib/status-receiver', function(exports, require, module) {
 (function() {
   var Event, Reloader, StatusReceiver, error, log;
 
-  log = require('../util/debuger').log('StatusReceiver');
+  log = require('../util/debug').log('StatusReceiver');
 
-  error = require('../util/debuger').error('StatusReceiver');
+  error = require('../util/debug').error('StatusReceiver');
 
   Event = require('./event');
 
@@ -1107,32 +1107,41 @@ define('/lib/status-receiver', function(exports, require, module) {
 }).call(this);
 });
 
-define('/util/debuger', function(exports, require, module) {
-var debuger = new Object;
+define('/util/debug', function(exports, require, module) {
+var debug = new Object;
 
-debuger.output = true;
+debug.output = {
+  level: {
+    1: false,
+    2: true,
+    3: true
+  }
+}
 
-debuger.log = function(masterName) {
-  if (!debuger.output) return;
+debug.log = function(masterName, level) {
+  if (typeof level === 'undefined') {
+    level = 1;
+  }
   return function() {
+    if (!debug.output.level[level]) return;
     var argumentsArray = Array.prototype.slice.call(arguments);
     argumentsArray.unshift(masterName);
     console.log.apply(console, argumentsArray);    
   }
 }
 
-debuger.set = function(name, value) {
-  if (typeof debuger.set[name] === 'function') return debuger.set[name](value);
-  debuger[name] = value;
-  return debuger;
+debug.set = function(name, value) {
+  if (typeof debug.set[name] === 'function') return debug.set[name](value);
+  debug[name] = value;
+  return debug;
 }
 
-debuger.get = function(name) {
-  if (typeof debuger.get[name] === 'function') return debuger.get[name](name);
-  return debuger[name];
+debug.get = function(name) {
+  if (typeof debug.get[name] === 'function') return debug.get[name](name);
+  return debug[name];
 }
 
-debuger.error = function(masterName) {
+debug.error = function(masterName) {
   return function(message) {
     err = new Error(message)
     err.from = masterName
@@ -1140,5 +1149,5 @@ debuger.error = function(masterName) {
   }
 }
 
-module.exports = debuger;
+module.exports = debug;
 });
