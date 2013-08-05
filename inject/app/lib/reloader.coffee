@@ -1,7 +1,7 @@
 log = require('../util/debug').log('Reloader')
 error = require('../util/debug').error('Reloader')
 dom = require('./dom')
-require('css-auto-reload')
+require('../extern/css-auto-reload')
 
 class Reloader
 
