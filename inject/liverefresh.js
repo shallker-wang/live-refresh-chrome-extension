@@ -646,6 +646,204 @@ define('/chrome/tabs', function(exports, require, module) {
 }).call(this);
 });
 
+define('/extern/css-auto-reload', function(exports, require, module) {
+// http://nv.github.io/css_auto-reload/
+
+StyleSheetList.prototype.reload_interval = 1000; // 1 second
+
+CSSStyleSheet.prototype.reload = function reload(){
+  // Reload one stylesheet
+  // usage: document.styleSheets[0].reload()
+  // return: URI of stylesheet if it could be reloaded, overwise undefined
+  if (this.href) {
+    var href = this.href;
+    var i = href.indexOf('?'),
+        last_reload = 'last_reload=' + (new Date).getTime();
+    if (i < 0) {
+      href += '?' + last_reload;
+    } else if (href.indexOf('last_reload=', i) < 0) {
+      href += '&' + last_reload;
+    } else {
+      href = href.replace(/last_reload=\d+/, last_reload);
+    }
+    return this.ownerNode.href = href;
+  }
+};
+
+StyleSheetList.prototype.reload = function reload(){
+  // Reload all stylesheets
+  // usage: document.styleSheets.reload()
+  for (var i=0; i<this.length; i++) {
+    this[i].reload()
+  }
+};
+
+StyleSheetList.prototype.start_autoreload = function start_autoreload(miliseconds /*Number*/){
+  // usage: document.styleSheets.start_autoreload()
+  if (!start_autoreload.running) {
+    var styles = this;
+    start_autoreload.running = setInterval(function reloading(){
+      styles.reload();
+    }, miliseconds || this.reload_interval);
+  }
+  return start_autoreload.running;
+};
+
+StyleSheetList.prototype.stop_autoreload = function stop_autoreload(){
+  // usage: document.styleSheets.stop_autoreload()
+  clearInterval(this.start_autoreload.running);
+  this.start_autoreload.running = null;
+};
+
+StyleSheetList.prototype.toggle_autoreload = function toggle_autoreload(){
+  // usage: document.styleSheets.toggle_autoreload()
+  return this.start_autoreload.running ? this.stop_autoreload() : this.start_autoreload();
+};});
+
+define('/extern/cssrefresh', function(exports, require, module) {
+/*  
+ *  CSSrefresh v1.0.1
+ *  
+ *  Copyright (c) 2012 Fred Heusschen
+ *  www.frebsite.nl
+ *
+ *  Dual licensed under the MIT and GPL licenses.
+ *  http://en.wikipedia.org/wiki/MIT_License
+ *  http://en.wikipedia.org/wiki/GNU_General_Public_License
+ */
+
+(function() {
+
+  var phpjs = {
+
+    array_filter: function( arr, func )
+    {
+      var retObj = {}; 
+      for ( var k in arr )
+      {
+        if ( func( arr[ k ] ) )
+        {
+          retObj[ k ] = arr[ k ];
+        }
+      }
+      return retObj;
+    },
+    filemtime: function( file )
+    {
+      var headers = this.get_headers( file, 1 );
+      return ( headers && headers[ 'Last-Modified' ] && Date.parse( headers[ 'Last-Modified' ] ) / 1000 ) || false;
+      },
+      get_headers: function( url, format )
+      {
+      var req = window.ActiveXObject ? new ActiveXObject( 'Microsoft.XMLHTTP' ) : new XMLHttpRequest();
+      if ( !req )
+      {
+        throw new Error('XMLHttpRequest not supported.');
+      }
+
+      var tmp, headers, pair, i, j = 0;
+
+      try
+      {
+        req.open( 'HEAD', url, false );
+        req.send( null ); 
+        if ( req.readyState < 3 )
+        {
+          return false;
+        }
+        tmp = req.getAllResponseHeaders();
+        tmp = tmp.split( '\n' );
+        tmp = this.array_filter( tmp, function( value )
+        {
+          return value.toString().substring( 1 ) !== '';
+        });
+        headers = format ? {} : [];
+  
+        for ( i in tmp )
+        {
+          if ( format )
+          {
+            pair = tmp[ i ].toString().split( ':' );
+            headers[ pair.splice( 0, 1 ) ] = pair.join( ':' ).substring( 1 );
+          }
+          else
+          {
+            headers[ j++ ] = tmp[ i ];
+          }
+        }
+  
+        return headers;
+      }
+      catch ( err )
+      {
+        return false;
+      }
+    }
+  };
+
+  var cssRefresh = function() {
+
+    this.reloadFile = function( links )
+    {
+      for ( var a = 0, l = links.length; a < l; a++ )
+      {
+        var link = links[ a ],
+          newTime = phpjs.filemtime( this.getRandom( link.href ) );
+
+        //  has been checked before
+        if ( link.last )
+        {
+          //  has been changed
+          if ( link.last != newTime )
+          {
+            //  reload
+            link.elem.setAttribute( 'href', this.getRandom( link.href ) );
+          }
+        }
+
+        //  set last time checked
+        link.last = newTime;
+      }
+      setTimeout( function()
+      {
+        this.reloadFile( links );
+      }, 1000 );
+    };
+
+    this.getHref = function( f )
+    {
+      return f.getAttribute( 'href' ).split( '?' )[ 0 ];
+    };
+    this.getRandom = function( f )
+    {
+      return f + '?x=' + Math.random();
+    };
+
+
+    var files = document.getElementsByTagName( 'link' ),
+      links = [];
+
+    for ( var a = 0, l = files.length; a < l; a++ )
+    {     
+      var elem = files[ a ],
+        rel = elem.rel;
+      if ( typeof rel != 'string' || rel.length == 0 || rel == 'stylesheet' )
+      {
+        links.push({
+          'elem' : elem,
+          'href' : this.getHref( elem ),
+          'last' : false
+        });
+      }
+    }
+    this.reloadFile( links );
+  };
+
+
+  cssRefresh();
+
+})();});
+
 define('/lib/connector', function(exports, require, module) {
 (function() {
   var Connector, Event, StatusReceiver, error, log,
@@ -783,60 +981,6 @@ define('/lib/connector', function(exports, require, module) {
 
 }).call(this);
 });
-
-define('/lib/css-auto-reload', function(exports, require, module) {
-// http://nv.github.io/css_auto-reload/
-
-StyleSheetList.prototype.reload_interval = 1000; // 1 second
-
-CSSStyleSheet.prototype.reload = function reload(){
-  // Reload one stylesheet
-  // usage: document.styleSheets[0].reload()
-  // return: URI of stylesheet if it could be reloaded, overwise undefined
-  if (this.href) {
-    var href = this.href;
-    var i = href.indexOf('?'),
-        last_reload = 'last_reload=' + (new Date).getTime();
-    if (i < 0) {
-      href += '?' + last_reload;
-    } else if (href.indexOf('last_reload=', i) < 0) {
-      href += '&' + last_reload;
-    } else {
-      href = href.replace(/last_reload=\d+/, last_reload);
-    }
-    return this.ownerNode.href = href;
-  }
-};
-
-StyleSheetList.prototype.reload = function reload(){
-  // Reload all stylesheets
-  // usage: document.styleSheets.reload()
-  for (var i=0; i<this.length; i++) {
-    this[i].reload()
-  }
-};
-
-StyleSheetList.prototype.start_autoreload = function start_autoreload(miliseconds /*Number*/){
-  // usage: document.styleSheets.start_autoreload()
-  if (!start_autoreload.running) {
-    var styles = this;
-    start_autoreload.running = setInterval(function reloading(){
-      styles.reload();
-    }, miliseconds || this.reload_interval);
-  }
-  return start_autoreload.running;
-};
-
-StyleSheetList.prototype.stop_autoreload = function stop_autoreload(){
-  // usage: document.styleSheets.stop_autoreload()
-  clearInterval(this.start_autoreload.running);
-  this.start_autoreload.running = null;
-};
-
-StyleSheetList.prototype.toggle_autoreload = function toggle_autoreload(){
-  // usage: document.styleSheets.toggle_autoreload()
-  return this.start_autoreload.running ? this.stop_autoreload() : this.start_autoreload();
-};});
 
 define('/lib/dom', function(exports, require, module) {
 var doc = document;
@@ -1005,7 +1149,7 @@ define('/lib/reloader', function(exports, require, module) {
 
   dom = require('./dom');
 
-  require('css-auto-reload');
+  require('../extern/css-auto-reload');
 
   Reloader = (function() {
     function Reloader() {}
