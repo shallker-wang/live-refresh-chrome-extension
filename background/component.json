@@ -1,0 +1,28 @@
+{
+  "name": "live-refresh-chrome-extension",
+  "repo": "shallker-wang/live-refresh-chrome-extension",
+  "description": "A live refresh chrome extension.",
+  "version": "0.0.1",
+  "keywords": [],
+  "paths": [
+    "../../../shallker"
+  ],
+  "local": [
+    "chrome-tabs"
+  ],
+  "dependencies": {
+    "shallker-wang/dever": "*",
+    "shallker-wang/eventy": "*"
+  },
+  "development": {
+    "shallker/dev.json": "*"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js",
+    "lib/activator.js",
+    "lib/server-connector.js",
+    "lib/script-connector.js"
+  ]
+}
