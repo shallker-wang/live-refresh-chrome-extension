@@ -1,0 +1,22 @@
+{
+  "name": "live-refresh-chrome-extension-content-script",
+  "repo": "shallker-wang/live-refresh-chrome-extension",
+  "description": "A liverefresh chrome extension.",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {
+    "shallker-wang/dever": "*",
+    "shallker-wang/eventy": "*"
+  },
+  "development": {
+    "shallker/dev.json": "*"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js",
+    "lib/message-executer.js",
+    "lib/extension-connector.js",
+    "lib/third/css-auto-reload.js"
+  ]
+}
