@@ -5,10 +5,7 @@ LiveRefresh Chrome extension.
 
 
 ## Installation
-1. Save link [Chrome Extension](https://github.com/shallker-wang/live-refresh-chrome-extension/raw/build/live-refresh-chrome-extension.crx) as file to your computer.
-2. Drag saved file live-refresh-chrome-extension.crx to Chrome extensions page chrome://extensions/
-3. Done.
-
+[Install from Chrome web store](https://chrome.google.com/webstore/detail/liverefresh/anjedjjhoempagnghcgbeembkdniplnn)
 
 ## Write a server
 1. Create a WebSocket server listening on port 35730.
