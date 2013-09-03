@@ -1,7 +1,6 @@
-
-build/app.js: components index.js
-	@component build --name app --standalone app
-	@echo build build/app.js
+../extension/content-script.js: components index.js
+	@component build -o ../extension --name content-script --standalone liverefresh
+	@echo build ../extension/content-script.js
 
 components: component.json
 	@component install --dev

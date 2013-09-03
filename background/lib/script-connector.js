@@ -8,7 +8,7 @@ var debug = require('dever').debug('ScriptConnector'),
 module.exports = function ScriptConnector(tab) {
   var autoReconnect = true;
   var script = {
-        liverefresh: '/content-script/build/app.js'
+        liverefresh: '/content-script.js'
       };
 
   var connector = function() {

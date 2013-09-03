@@ -1,2 +1,4 @@
 .DS_Store
 *.pem
+extension/background.js
+extension/content-script.js
