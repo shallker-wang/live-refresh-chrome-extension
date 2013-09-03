@@ -1,6 +1,6 @@
 {
-  "name": "Liverefresh Chrome Extension",
-  "description": "A chrome extension to help your development.",
+  "name": "Liverefresh",
+  "description": "Liverefresh Chrome extension.",
   "version": "1.0",
   "manifest_version": 2,
   "permissions": [
